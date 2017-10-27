@@ -1,23 +1,40 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.Font;
+import java.io.*;
 
-public class MainFrame extends JFrame implements ActionListener{
+public class MainFrame extends JFrame implements ActionListener, Serializable {
     private static final int DEFAULT_WIDTH = 1000;
     private static final int DEFAULT_HEIGHT = 1000;
     private PaintPanel board;
     private ToolBar tool;
+    private FontDialog fontDialog;
+    private JFileChooser saveFileChooser = new JFileChooser();
+    private JFileChooser openFileChooser = new JFileChooser();
+    private FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPG图像", "jpg");
+    private FileNameExtensionFilter savFilter = new FileNameExtensionFilter("SAV文件", "sav");
     public MainFrame() {
         board = new PaintPanel();
         tool = new ToolBar();
+        fontDialog = new FontDialog(this);
+        tool.openButton.addActionListener(this);
+        tool.saveButton.addActionListener(this);
+        tool.selectButton.addActionListener(this);
         tool.ovalButton.addActionListener(this);
         tool.rectangleButton.addActionListener(this);
         tool.lineButton.addActionListener(this);
-        tool.eraserButton.addActionListener(this);
         tool.colorButton.addActionListener(this);
         tool.strokeBox.addActionListener(this);
-        tool.helpButton.addActionListener(this);
+        tool.segmentButton.addActionListener(this);
+        tool.textButton.addActionListener(this);
+        tool.clearButton.addActionListener(this);
+        tool.textField.addActionListener(this);
+        tool.fontButton.addActionListener(this);
+        saveFileChooser.setFileFilter(savFilter);
+        saveFileChooser.setFileFilter(jpgFilter);
+        openFileChooser.setFileFilter(savFilter);
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         add(tool, BorderLayout.NORTH);
         add(board, BorderLayout.CENTER);
@@ -25,49 +42,49 @@ public class MainFrame extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == tool.ovalButton) {
-            board.setTool(0);
+            board.setTool(PaintPanel.tools.OVAL);
         } else if (e.getSource() == tool.rectangleButton) {
-            board.setTool(1);
+            board.setTool(PaintPanel.tools.RECTANGLE);
         } else if (e.getSource() == tool.lineButton) {
-            board.setTool(2);
-        } else if (e.getSource() == tool.eraserButton) {
-            board.setTool(3);
+            board.setTool(PaintPanel.tools.LINE);
         } else if (e.getSource() == tool.colorButton) {
-            Color color = JColorChooser.showDialog(null, "调色板", Color.blue);
-            board.setFore(color);
+            board.setFore(JColorChooser.showDialog(null, "调色板", Color.blue));
         } else if (e.getSource() == tool.strokeBox) {
             board.setStroke(tool.strokeBox.getSelectedIndex() + 1);
-        } else if (e.getSource() == tool.helpButton) {
-            new HelpDialog(this).setVisible(true);
+        } else if (e.getSource() == tool.segmentButton) {
+            board.setTool(PaintPanel.tools.SEGMENT);
+        } else if (e.getSource() == tool.selectButton) {
+            board.setTool(PaintPanel.tools.SELECT);
+        } else if (e.getSource() == tool.textButton) {
+            board.setCurrentText(tool.textField.getText());
+            board.setTool(PaintPanel.tools.TEXT);
+        } else if (e.getSource() == tool.textField) {
+            board.setCurrentText(tool.textField.getText());
+        } else if (e.getSource() == tool.clearButton) {
+            board.clear();
+        } else if (e.getSource() == tool.fontButton) {
+            fontDialog.setVisible(true);
+            board.setFont(fontDialog.getFont());
+        } else if (e.getSource() == tool.openButton) {
+            openFileChooser.showOpenDialog(this);
+            File file = openFileChooser.getSelectedFile();
+            board.readImage(file);
+        } else if (e.getSource() == tool.saveButton) {
+            saveFileChooser.showSaveDialog(this);
+            File file = saveFileChooser.getSelectedFile();
+            try {
+                if(saveFileChooser.getFileFilter() == jpgFilter) {
+                    ImageIO.write(board.getImage(), "jpg", file);
+                } else if (saveFileChooser.getFileFilter() == savFilter) {
+                    if(!file.getName().endsWith(".sav"))
+                        file = new File(file.getAbsoluteFile() + ".sav");
+                    board.writeImage(file);
+                }
+            } catch (IOException exce) {
+                JOptionPane.showMessageDialog(this, "保存出错");
+                exce.printStackTrace();
+            }
         }
     }
 }
 
-class ToolBar extends JToolBar {
-    public JButton ovalButton = new JButton("圆形");
-    public String str[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
-    public JButton rectangleButton = new JButton("方形");
-    public JButton lineButton = new JButton("画笔");
-    public JButton eraserButton = new JButton("橡皮");
-    public JComboBox strokeBox = new JComboBox(str);
-    public JButton colorButton = new JButton("颜色");
-    public JButton helpButton = new JButton("帮助");
-    public ToolBar(){
-        setFloatable(false);
-        ovalButton.setToolTipText("画一个圆形");
-        rectangleButton.setToolTipText("画一个方形");
-        lineButton.setToolTipText("自由画线");
-        eraserButton.setToolTipText("擦除");
-        strokeBox.setToolTipText("选择线宽");
-        colorButton.setToolTipText("选择颜色");
-        helpButton.setToolTipText("帮助");
-        this.setLayout(new GridLayout(1, 6));
-        add(ovalButton);
-        add(rectangleButton);
-        add(lineButton);
-        add(eraserButton);
-        add(strokeBox);
-        add(colorButton);
-        add(helpButton);
-    }
-}

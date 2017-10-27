@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
 public class Oval extends Shape {
 
@@ -10,13 +11,13 @@ public class Oval extends Shape {
         g2.setColor(color);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setStroke(new BasicStroke(stroke));
-        if (deltaX >= 0 && deltaY >= 0)
-            g2.drawOval(startX, startY, deltaX, deltaY);
-        if (deltaX < 0 && deltaY >= 0)
-            g2.drawOval(startX + deltaX, startY, -deltaX, deltaY);
-        if (deltaX < 0 && deltaY < 0)
-            g2.drawOval(startX + deltaX, startY + deltaY, -deltaX, -deltaY);
-        if (deltaX >= 0 && deltaY < 0)
-            g2.drawOval(startX, startY + deltaY, deltaX, -deltaY);
+        g2.drawOval(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
     }
+
+    public boolean contain(int x, int y) {
+        Ellipse2D e1 = new Ellipse2D.Double(nwX - stroke, nwY - stroke, Math.abs(deltaX) + 2 * stroke, Math.abs(deltaY) + 2 * stroke);
+        Ellipse2D e2 = new Ellipse2D.Double(nwX + stroke, nwY + stroke, Math.abs(deltaX) - 2 * stroke, Math.abs(deltaY) - 2 * stroke);
+        return (e1.contains(x, y) && !e2.contains(x, y));
+    }
+
 }

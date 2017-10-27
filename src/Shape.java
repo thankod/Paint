@@ -2,10 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.Serializable;
 
-public abstract class Shape extends JLabel {
+public abstract class Shape extends JLabel implements Serializable {
     protected Color color;
-    protected int type;//0 oval 1 rect
+    protected int type;//0 oval 1 rect 2 line
+    protected int nwX = 0;
+    protected int nwY = 0;
     protected int startX = 0;
     protected int startY = 0;
     protected int currentX = 0;
@@ -20,8 +23,8 @@ public abstract class Shape extends JLabel {
         color = color1;
         type = type1;
         stroke = stroke1;
-        startX = endX = x;
-        startY = endY = y;
+        nwX = startX = endX = x;
+        nwY = startY = endY = y;
         deltaX = 0;
         deltaY = 0;
     }
@@ -40,14 +43,7 @@ public abstract class Shape extends JLabel {
 
     public abstract void draw(Graphics2D g2);
 
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public int getType() {
-        return type;
-    }
+    public abstract boolean contain(int x, int y);
 
     public void setCurrentX(int currentX) {
         this.currentX = currentX;
@@ -63,9 +59,27 @@ public abstract class Shape extends JLabel {
         this.currentY = currentY;
         endY = this.currentY;
         deltaY = endY - startY;
+        if (endX <= startX)
+            nwX = endX;
+        else
+            nwX = startX;
+
+        if (endY <= startY)
+            nwY = endY;
+        else
+            nwY = startY;
     }
 
     public int getCurrentY() {
         return currentY;
+    }
+
+    public void moveShape(int x, int y) {
+        startX += x;
+        nwX += x;
+        endX += x ;
+        startX += y;
+        nwY += y;
+        endY += y;
     }
 }
