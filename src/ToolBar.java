@@ -1,3 +1,6 @@
+/**
+ * 工具栏类
+ */
 import javax.swing.*;
 import java.awt.*;
 

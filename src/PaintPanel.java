@@ -1,3 +1,7 @@
+/**
+ * 可以绘制图案的区域
+ */
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -7,7 +11,6 @@ import javax.swing.*;
 
 
 public class PaintPanel extends JComponent implements Serializable {
-    private static final int SIDELENGTH = 100;
     private ArrayList<Shape> shapes;
     private ArrayList<Line> lines;
     private Shape currentShape;
@@ -61,8 +64,11 @@ public class PaintPanel extends JComponent implements Serializable {
         return fore;
     }
 
-
-    public void paintComponent(Graphics g) {
+    /**
+     * 将存储的所有图形绘制出来
+     */
+    @Override
+    public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         for (Shape s : shapes)
             s.draw(g2);
@@ -70,6 +76,9 @@ public class PaintPanel extends JComponent implements Serializable {
             l.draw(g2);
     }
 
+    /**
+     * 查找坐标(x,y)处是否有图形，如有，返回这个图形，否则返回null
+     */
     public Shape find (int x, int y) {
         for (Shape r : shapes) {
             if (r.contain(x, y))
@@ -78,6 +87,9 @@ public class PaintPanel extends JComponent implements Serializable {
         return null;
     }
 
+    /**
+     * 将目前的内容画到一个BufferedImage中并返回
+     */
     public BufferedImage getImage () {
         BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2d = image.createGraphics();
@@ -85,13 +97,18 @@ public class PaintPanel extends JComponent implements Serializable {
         paint(graphics2d);
         return image;
     }
-
+    /**
+     * 清除所存的所有图形信息并重绘
+     */
     public void clear () {
         shapes.clear();
         lines.clear();
         repaint();
     }
 
+    /**
+     * 将目前的图形信息保存到一个文件中
+     */
     public void writeImage (File file) {
         try {
             FileOutputStream fos = new FileOutputStream(file);
@@ -106,7 +123,9 @@ public class PaintPanel extends JComponent implements Serializable {
             exce.printStackTrace();
         }
     }
-
+    /**
+     * 从一个文件中读取图形信息，将其保存到程序中并重绘
+     */
     public void readImage (File file) {
         try {
             FileInputStream fis = new FileInputStream(file);
@@ -125,14 +144,17 @@ public class PaintPanel extends JComponent implements Serializable {
     }
 
     private class MouseHandler extends MouseAdapter {
+        /**
+         * 鼠标点击时执行的操作
+         */
         public void mousePressed(MouseEvent mouseEvent) {
             switch (tool) {
                 case OVAL:
-                    currentShape = new Oval(fore, 0, mouseEvent.getX(), mouseEvent.getY(), stroke);
+                    currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
                     shapes.add(currentShape);
                     break;
                 case RECTANGLE:
-                    currentShape = new Rectangle(fore, 1, mouseEvent.getX(), mouseEvent.getY(), stroke);
+                    currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
                     shapes.add(currentShape);
                     break;
                 case LINE:
@@ -147,14 +169,13 @@ public class PaintPanel extends JComponent implements Serializable {
                     }
                     break;
                 case SEGMENT:
-                    currentShape = new Line(fore, 0, mouseEvent.getX(), mouseEvent.getY(), stroke);
+                    currentShape = new Line(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
                     shapes.add(currentShape);
                     break;
                 case TEXT:
                     if(currentText == null)
                         break;
-                    System.out.println(font);
-                    currentShape = new Text(fore, 0, mouseEvent.getX(), mouseEvent.getY(), currentText, font);
+                    currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font);
                     shapes.add(currentShape);
                     break;
                 default:
@@ -169,6 +190,9 @@ public class PaintPanel extends JComponent implements Serializable {
     }
 
     private class MouseMotionHandler implements MouseMotionListener {
+        /**
+         * 鼠标移动时执行的操作
+         */
         public void mouseMoved(MouseEvent mouseEvent) {
             int x2 = mouseEvent.getX();
             int y2 = mouseEvent.getY();
@@ -188,7 +212,9 @@ public class PaintPanel extends JComponent implements Serializable {
             }
 
         }
-
+        /**
+         * 鼠标拖拽时执行的操作
+         */
         public void mouseDragged(MouseEvent mouseEvent) {
 
             if ((tool == tools.OVAL || tool == tools.RECTANGLE || tool == tools.SEGMENT) && currentShape != null) {
@@ -201,7 +227,7 @@ public class PaintPanel extends JComponent implements Serializable {
                 int x2 = mouseEvent.getX();
                 int y2 = mouseEvent.getY();
 
-                Line l = new Line(fore, 2, x1, y1, x2, y2, stroke);
+                Line l = new Line(fore, x1, y1, x2, y2, stroke);
                 x1 = x2;
                 y1 = y2;
                 lines.add(l);
