@@ -1,5 +1,5 @@
-/**
- * 可以绘制图案的区域
+/*
+  可以绘制图案的区域
  */
 
 import java.awt.*;
@@ -226,7 +226,6 @@ public class PaintPanel extends JComponent implements Serializable {
             } else if (tool == tools.LINE) {
                 int x2 = mouseEvent.getX();
                 int y2 = mouseEvent.getY();
-
                 Line l = new Line(fore, x1, y1, x2, y2, stroke);
                 x1 = x2;
                 y1 = y2;

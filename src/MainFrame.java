@@ -1,5 +1,5 @@
-/**
- * 程序的主窗口
+/*
+  程序的主窗口
  */
 
 import javax.imageio.ImageIO;
@@ -9,22 +9,33 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
-public class MainFrame extends JFrame implements ActionListener, Serializable {
+public class MainFrame extends JFrame implements Serializable {
     private static final int DEFAULT_WIDTH = 1000;
     private static final int DEFAULT_HEIGHT = 1000;
     private PaintPanel board;
     private ToolBar tool;
     private FontDialog fontDialog;
-    private JFileChooser saveFileChooser = new JFileChooser();
-    private JFileChooser openFileChooser = new JFileChooser();
-    private FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPG图像", "jpg");
-    private FileNameExtensionFilter savFilter = new FileNameExtensionFilter("SAV文件", "sav");
+    private FileIO fileIO;
+
     public MainFrame() {
         board = new PaintPanel();
         tool = new ToolBar();
         fontDialog = new FontDialog(this);
-        tool.openButton.addActionListener(this);
-        tool.saveButton.addActionListener(this);
+        fileIO = new FileIO();
+        tool.openButton.addActionListener(actionEvent -> board.readImage(fileIO.openFile(this)));
+        tool.saveButton.addActionListener(actionEvent -> {
+            File file = fileIO.saveFile(this);
+            if(file.getName().endsWith(".jpg")) {
+                try {
+                    ImageIO.write(board.getImage(), "jpg", file);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "保存出错！请重试！");
+                    e.printStackTrace();
+                }
+            } else if(file.getName().endsWith(".sav")) {
+                board.writeImage(file);
+            }
+        });
         tool.selectButton.addActionListener(actionEvent -> board.setTool(PaintPanel.tools.SELECT));
         tool.ovalButton.addActionListener(actionEvent -> board.setTool(PaintPanel.tools.OVAL));
         tool.rectangleButton.addActionListener(actionEvent -> board.setTool(PaintPanel.tools.RECTANGLE));
@@ -38,42 +49,14 @@ public class MainFrame extends JFrame implements ActionListener, Serializable {
         });
         tool.clearButton.addActionListener(actionEvent -> board.clear());
         tool.textField.addActionListener(actionEvent -> board.setCurrentText(tool.textField.getText()));
-        tool.fontButton.addActionListener(this);
-        saveFileChooser.setFileFilter(savFilter);
-        saveFileChooser.setFileFilter(jpgFilter);
-        openFileChooser.setFileFilter(savFilter);
+        tool.fontButton.addActionListener(actionEvent -> {
+            fontDialog.setVisible(true);
+            board.setFont(fontDialog.getFont());
+        });
+
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         add(tool, BorderLayout.NORTH);
         add(board, BorderLayout.CENTER);
-    }
-    /**
-     * 根据选择的控件执行对应的操作
-     */
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == tool.fontButton) {
-            fontDialog.setVisible(true);
-            board.setFont(fontDialog.getFont());
-        } else if (e.getSource() == tool.openButton) {
-            openFileChooser.showOpenDialog(this);
-            File file = openFileChooser.getSelectedFile();
-            board.readImage(file);
-        } else if (e.getSource() == tool.saveButton) {
-            saveFileChooser.showSaveDialog(this);
-            File file = saveFileChooser.getSelectedFile();
-            try {
-                if(saveFileChooser.getFileFilter() == jpgFilter) {
-                    file = new File(file.getAbsoluteFile() + ".jpg");
-                    ImageIO.write(board.getImage(), "jpg", file);
-                } else if (saveFileChooser.getFileFilter() == savFilter) {
-                    if(!file.getName().endsWith(".sav"))
-                        file = new File(file.getAbsoluteFile() + ".sav");
-                    board.writeImage(file);
-                }
-            } catch (IOException exce) {
-                JOptionPane.showMessageDialog(this, "保存出错");
-                exce.printStackTrace();
-            }
-        }
     }
 }
 

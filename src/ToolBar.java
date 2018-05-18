@@ -12,7 +12,7 @@ class ToolBar extends JToolBar{
     public String[] lineSize = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
     public JButton rectangleButton = new JButton("方形");
     public JButton lineButton = new JButton("画笔");
-    public JComboBox strokeBox = new JComboBox(lineSize);
+    public JComboBox<String> strokeBox = new JComboBox<>(lineSize);
     public JButton colorButton = new JButton("颜色");
     public JButton segmentButton = new JButton("直线");
     public JButton textButton = new JButton("文字");
@@ -33,7 +33,6 @@ class ToolBar extends JToolBar{
         textButton.setToolTipText("输入文字");
         clearButton.setToolTipText("清屏");
         fontButton.setToolTipText("修改字体");
-
         openButton.setPreferredSize(new Dimension(50,30));
         saveButton.setPreferredSize(new Dimension(50,30));
         selectButton.setPreferredSize(new Dimension(50,30));
