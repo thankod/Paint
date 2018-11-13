@@ -19,6 +19,7 @@ public class Line extends Shape {
         g2.drawLine(startX, startY, endX, endY);
     }
 
+
     @Override
     public void drawFill(Graphics2D g2) {
 

@@ -26,9 +26,14 @@ public class Rectangle extends Shape {
      * 通过Rectangle2D类的contains函数判断坐标(x,y)是否在此Rectangle中
      */
     public boolean contain(int x, int y) {
-        Rectangle2D r1 = new Rectangle2D.Double(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
-        Rectangle2D r2 = new Rectangle2D.Double(nwX + stroke, nwY + stroke, Math.abs(deltaX) - 2 * stroke, Math.abs(deltaY) - 2 * stroke);
-        return r1.contains(x, y) && !r2.contains(x, y);
+        if(isFill) {
+            Rectangle2D r1 = new Rectangle2D.Double(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
+            return r1.contains(x, y);
+        } else {
+            Rectangle2D r1 = new Rectangle2D.Double(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
+            Rectangle2D r2 = new Rectangle2D.Double(nwX + stroke, nwY + stroke, Math.abs(deltaX) - 2 * stroke, Math.abs(deltaY) - 2 * stroke);
+            return r1.contains(x, y) && !r2.contains(x, y);
+        }
     }
 
 }

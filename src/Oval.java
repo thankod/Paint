@@ -26,9 +26,14 @@ public class Oval extends Shape {
      * 通过Ellipse2D类的contains函数判断坐标(x,y)是否在此Oval中
      */
     public boolean contain(int x, int y) {
-        Ellipse2D e1 = new Ellipse2D.Double(nwX - stroke, nwY - stroke, Math.abs(deltaX) + 2 * stroke, Math.abs(deltaY) + 2 * stroke);
-        Ellipse2D e2 = new Ellipse2D.Double(nwX + stroke, nwY + stroke, Math.abs(deltaX) - 2 * stroke, Math.abs(deltaY) - 2 * stroke);
-        return (e1.contains(x, y) && !e2.contains(x, y));
+        if(isFill) {
+            Ellipse2D e1 = new Ellipse2D.Double(nwX - stroke, nwY - stroke, Math.abs(deltaX) + 2 * stroke, Math.abs(deltaY) + 2 * stroke);
+            return e1.contains(x, y);
+        } else {
+            Ellipse2D e1 = new Ellipse2D.Double(nwX - stroke, nwY - stroke, Math.abs(deltaX) + 2 * stroke, Math.abs(deltaY) + 2 * stroke);
+            Ellipse2D e2 = new Ellipse2D.Double(nwX + stroke, nwY + stroke, Math.abs(deltaX) - 2 * stroke, Math.abs(deltaY) - 2 * stroke);
+            return (e1.contains(x, y) && !e2.contains(x, y));
+        }
     }
 
 }

@@ -16,6 +16,9 @@ public class Text extends Shape {
         g2.drawString(context, nwX, nwY);
     }
 
+    /**
+     * 文本框不需要填充
+     */
     @Override
     public void drawFill(Graphics2D g2) {
 
