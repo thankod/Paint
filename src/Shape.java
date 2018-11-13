@@ -42,10 +42,17 @@ public abstract class Shape extends JLabel implements Serializable {
         deltaY = 0;
     }
     /**
-     * 绘制这个图形的方法
+     * 绘制这个图形的方法 不带填充
      * @param g2 从PaintPanel里传来的Graphics2D对象
      */
     public abstract void draw(Graphics2D g2);
+
+    /**
+     * 绘制这个图形的方法 带填充效果
+     * @param g2 从PaintPanel里传来的Graphics2D对象
+     */
+    public abstract void drawFill(Graphics2D g2);
+
 
     /**
      * 判断这个图形是否包括某坐标

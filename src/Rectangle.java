@@ -6,11 +6,21 @@ public class Rectangle extends Shape {
     public Rectangle(Color color, int x, int y, float stroke1) {
         super(color, x, y, stroke1);
     }
+
+    @Override
     public void draw(Graphics2D g2) {
         g2.setColor(color);
         g2.setStroke(new BasicStroke(stroke));
         g2.drawRect(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
     }
+
+    @Override
+    public void drawFill(Graphics2D g2) {
+        g2.setColor(color);
+        g2.setStroke(new BasicStroke(stroke));
+        g2.fillRect(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
+    }
+
 
     /**
      * 通过Rectangle2D类的contains函数判断坐标(x,y)是否在此Rectangle中

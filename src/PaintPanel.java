@@ -24,9 +24,11 @@ public class PaintPanel extends JComponent implements Serializable {
     private cursors cursor;
     private int x1 = 0;
     private int y1 = 0;
+    private boolean fill;
 
     public PaintPanel() {
         tool = tools.OVAL;
+        fill = false;
         stroke = 3.0f;
         fore = Color.BLACK;
         font =  new Font("黑体", 0, 20);
@@ -64,16 +66,27 @@ public class PaintPanel extends JComponent implements Serializable {
         return fore;
     }
 
+    public void setFill(boolean is) {this.fill = is;}
+
+
+
     /**
      * 将存储的所有图形绘制出来
      */
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        for (Shape s : shapes)
-            s.draw(g2);
-        for (Line l : lines)
-            l.draw(g2);
+        if(this.fill) {
+            for (Shape s : shapes)
+                s.drawFill(g2);
+            for (Line l : lines)
+                l.drawFill(g2);
+        } else {
+            for (Shape s : shapes)
+                s.draw(g2);
+            for (Line l : lines)
+                l.draw(g2);
+        }
     }
 
     /**
@@ -216,7 +229,6 @@ public class PaintPanel extends JComponent implements Serializable {
          * 鼠标拖拽时执行的操作
          */
         public void mouseDragged(MouseEvent mouseEvent) {
-
             if ((tool == tools.OVAL || tool == tools.RECTANGLE || tool == tools.SEGMENT) && currentShape != null) {
                 int x = mouseEvent.getX();
                 int y = mouseEvent.getY();

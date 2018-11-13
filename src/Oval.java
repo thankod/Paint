@@ -13,6 +13,15 @@ public class Oval extends Shape {
         g2.setStroke(new BasicStroke(stroke));
         g2.drawOval(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
     }
+
+    @Override
+    public void drawFill(Graphics2D g2) {
+        g2.setColor(color);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setStroke(new BasicStroke(stroke));
+        g2.fillOval(nwX, nwY, Math.abs(deltaX), Math.abs(deltaY));
+    }
+
     /**
      * 通过Ellipse2D类的contains函数判断坐标(x,y)是否在此Oval中
      */

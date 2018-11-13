@@ -53,7 +53,7 @@ public class MainFrame extends JFrame implements Serializable {
             fontDialog.setVisible(true);
             board.setFont(fontDialog.getFont());
         });
-
+        tool.fillCheckBox.addActionListener(actionEvent -> board.setFill(tool.fillCheckBox.isSelected()));
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         add(tool, BorderLayout.NORTH);
         add(board, BorderLayout.CENTER);

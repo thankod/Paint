@@ -16,6 +16,11 @@ public class Text extends Shape {
         g2.drawString(context, nwX, nwY);
     }
 
+    @Override
+    public void drawFill(Graphics2D g2) {
+
+    }
+
     public boolean contain(int x, int y) {
         return false;
     }

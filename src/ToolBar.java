@@ -19,6 +19,7 @@ class ToolBar extends JToolBar{
     public JButton clearButton = new JButton("清屏");
     public JTextField textField = new JTextField("在此输入文字并按回车确定");
     public JButton fontButton = new JButton("字体");
+    public JCheckBox fillCheckBox = new JCheckBox("填充");
     public ToolBar() {
         setFloatable(false);
         openButton.setToolTipText("打开已保存的文件");
@@ -33,17 +34,22 @@ class ToolBar extends JToolBar{
         textButton.setToolTipText("输入文字");
         clearButton.setToolTipText("清屏");
         fontButton.setToolTipText("修改字体");
-        openButton.setPreferredSize(new Dimension(50,30));
-        saveButton.setPreferredSize(new Dimension(50,30));
-        selectButton.setPreferredSize(new Dimension(50,30));
-        ovalButton.setPreferredSize(new Dimension(50,30));
-        rectangleButton.setPreferredSize(new Dimension(50,30));
-        lineButton.setPreferredSize(new Dimension(50,30));
-        colorButton.setPreferredSize(new Dimension(50,30));
-        textButton.setPreferredSize(new Dimension(50,30));
-        segmentButton.setPreferredSize(new Dimension(50,30));
-        clearButton.setPreferredSize(new Dimension(50,30));
-        fontButton.setPreferredSize(new Dimension(50,30));
+        fillCheckBox.setToolTipText("是否填充颜色");
+        openButton.setPreferredSize(new Dimension(110,30));
+        saveButton.setPreferredSize(new Dimension(40,30));
+        selectButton.setPreferredSize(new Dimension(40,30));
+        ovalButton.setPreferredSize(new Dimension(40,30));
+        rectangleButton.setPreferredSize(new Dimension(40,30));
+        lineButton.setPreferredSize(new Dimension(40,30));
+        colorButton.setPreferredSize(new Dimension(40,30));
+        textButton.setPreferredSize(new Dimension(40,30));
+        segmentButton.setPreferredSize(new Dimension(40,30));
+        clearButton.setPreferredSize(new Dimension(40,30));
+        fontButton.setPreferredSize(new Dimension(40,30));
+        fillCheckBox.setPreferredSize(new Dimension(70, 30));
+
+
+
 
         textField.setFont(new Font("微软雅黑", Font.PLAIN, 14));
         this.setLayout(new FlowLayout());
@@ -54,6 +60,7 @@ class ToolBar extends JToolBar{
         add(rectangleButton);
         add(lineButton);
         add(strokeBox);
+        add(fillCheckBox);
         add(colorButton);
         add(segmentButton);
         add(textButton);
