@@ -22,8 +22,10 @@ public abstract class Shape extends JLabel implements Serializable {
     protected int deltaY = 0;
     protected float stroke = 0;
     protected boolean isFill = false;
+    protected boolean isDeleted = false;
 
-    protected Shape(Color color1, int x, int y, float stroke1, boolean is) {
+
+    protected Shape(Color color1, int x, int y, float stroke1, boolean is,  boolean isDel) {
         color = color1;
         stroke = stroke1;
         nwX = startX = endX = x;
@@ -31,9 +33,10 @@ public abstract class Shape extends JLabel implements Serializable {
         deltaX = 0;
         deltaY = 0;
         isFill = is;
+        isDeleted = isDel;
     }
 
-    protected Shape(Color color1, int startX1, int startY1, int endX1, int endY1, float stroke1, boolean is) {
+    protected Shape(Color color1, int startX1, int startY1, int endX1, int endY1, float stroke1, boolean is, boolean isDel) {
         color = color1;
         stroke = stroke1;
         startX = startX1;
@@ -43,6 +46,7 @@ public abstract class Shape extends JLabel implements Serializable {
         deltaX = 0;
         deltaY = 0;
         isFill = is;
+        isDeleted = isDel;
     }
     /**
      * 绘制这个图形的方法 不带填充

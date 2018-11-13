@@ -3,8 +3,8 @@ import java.awt.geom.Ellipse2D;
 
 public class Oval extends Shape {
 
-    public Oval(Color color, int x, int y, float stroke1, boolean is) {
-        super(color, x, y, stroke1, is);
+    public Oval(Color color, int x, int y, float stroke1, boolean is, boolean isDel) {
+        super(color, x, y, stroke1, is, isDel);
     }
 
     public void draw(Graphics2D g2) {

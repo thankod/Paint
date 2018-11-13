@@ -20,6 +20,7 @@ class ToolBar extends JToolBar{
     public JTextField textField = new JTextField("在此输入文字并按回车确定");
     public JButton fontButton = new JButton("字体");
     public JCheckBox fillCheckBox = new JCheckBox("填充");
+    public JCheckBox deleteCheckBox = new JCheckBox("删除");
     public ToolBar() {
         setFloatable(false);
         openButton.setToolTipText("打开已保存的文件");
@@ -35,6 +36,7 @@ class ToolBar extends JToolBar{
         clearButton.setToolTipText("清屏");
         fontButton.setToolTipText("修改字体");
         fillCheckBox.setToolTipText("是否填充颜色");
+        deleteCheckBox.setToolTipText("删除");
         openButton.setPreferredSize(new Dimension(110,30));
         saveButton.setPreferredSize(new Dimension(40,30));
         selectButton.setPreferredSize(new Dimension(40,30));
@@ -47,7 +49,7 @@ class ToolBar extends JToolBar{
         clearButton.setPreferredSize(new Dimension(40,30));
         fontButton.setPreferredSize(new Dimension(40,30));
         fillCheckBox.setPreferredSize(new Dimension(70, 30));
-
+        deleteCheckBox.setPreferredSize(new Dimension(60, 30));
 
 
 
@@ -61,6 +63,7 @@ class ToolBar extends JToolBar{
         add(lineButton);
         add(strokeBox);
         add(fillCheckBox);
+        add(deleteCheckBox);
         add(colorButton);
         add(segmentButton);
         add(textButton);

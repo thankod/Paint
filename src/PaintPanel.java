@@ -25,6 +25,7 @@ public class PaintPanel extends JComponent implements Serializable {
     private int x1 = 0;
     private int y1 = 0;
     private boolean fill;
+    private boolean delete;
 
     public PaintPanel() {
         tool = tools.OVAL;
@@ -68,6 +69,7 @@ public class PaintPanel extends JComponent implements Serializable {
 
     public void setFill(boolean is) {this.fill = is;}
 
+    public void setDelete(boolean del) {this.delete = del;}
 
 
     /**
@@ -77,13 +79,16 @@ public class PaintPanel extends JComponent implements Serializable {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         for (Shape s : shapes) {
+            if(s.isDeleted) continue;
             if(s.isFill) s.drawFill(g2);
             else {
                 s.draw(g2);
             }
         }
-        for (Line l : lines)
+        for (Line l : lines) {
+            if(l.isDeleted) continue;
             l.draw(g2);
+        }
     }
 
     /**
@@ -160,11 +165,11 @@ public class PaintPanel extends JComponent implements Serializable {
         public void mousePressed(MouseEvent mouseEvent) {
             switch (tool) {
                 case OVAL:
-                    currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
+                    currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill, delete);
                     shapes.add(currentShape);
                     break;
                 case RECTANGLE:
-                    currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
+                    currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill, delete);
                     shapes.add(currentShape);
                     break;
                 case LINE:
@@ -176,16 +181,17 @@ public class PaintPanel extends JComponent implements Serializable {
                     y1 = mouseEvent.getY();
                     if (cursor == cursors.MOVE) {
                         currentShape = find(mouseEvent.getX(), mouseEvent.getY());
+                        if(delete) currentShape.isDeleted = true;
                     }
                     break;
                 case SEGMENT:
-                    currentShape = new Line(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
+                    currentShape = new Line(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, delete);
                     shapes.add(currentShape);
                     break;
                 case TEXT:
                     if(currentText == null)
                         break;
-                    currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font, fill);
+                    currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font, fill, delete);
                     shapes.add(currentShape);
                     break;
                 default:
@@ -235,7 +241,7 @@ public class PaintPanel extends JComponent implements Serializable {
             } else if (tool == tools.LINE) {
                 int x2 = mouseEvent.getX();
                 int y2 = mouseEvent.getY();
-                Line l = new Line(fore, x1, y1, x2, y2, stroke);
+                Line l = new Line(fore, x1, y1, x2, y2, stroke, delete);
                 x1 = x2;
                 y1 = y2;
                 lines.add(l);

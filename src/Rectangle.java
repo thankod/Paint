@@ -3,8 +3,8 @@ import java.awt.geom.Rectangle2D;
 
 public class Rectangle extends Shape {
 
-    public Rectangle(Color color, int x, int y, float stroke1, boolean is) {
-        super(color, x, y, stroke1, is);
+    public Rectangle(Color color, int x, int y, float stroke1, boolean is, boolean isDel) {
+        super(color, x, y, stroke1, is, isDel);
     }
 
     @Override
