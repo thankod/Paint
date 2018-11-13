@@ -76,17 +76,14 @@ public class PaintPanel extends JComponent implements Serializable {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        if(this.fill) {
-            for (Shape s : shapes)
-                s.drawFill(g2);
-            for (Line l : lines)
-                l.drawFill(g2);
-        } else {
-            for (Shape s : shapes)
+        for (Shape s : shapes) {
+            if(s.isFill) s.drawFill(g2);
+            else {
                 s.draw(g2);
-            for (Line l : lines)
-                l.draw(g2);
+            }
         }
+        for (Line l : lines)
+            l.draw(g2);
     }
 
     /**
@@ -163,11 +160,11 @@ public class PaintPanel extends JComponent implements Serializable {
         public void mousePressed(MouseEvent mouseEvent) {
             switch (tool) {
                 case OVAL:
-                    currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
+                    currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
                     shapes.add(currentShape);
                     break;
                 case RECTANGLE:
-                    currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
+                    currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
                     shapes.add(currentShape);
                     break;
                 case LINE:
@@ -188,7 +185,7 @@ public class PaintPanel extends JComponent implements Serializable {
                 case TEXT:
                     if(currentText == null)
                         break;
-                    currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font);
+                    currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font, fill);
                     shapes.add(currentShape);
                     break;
                 default:

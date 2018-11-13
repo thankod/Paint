@@ -5,11 +5,11 @@ import java.awt.*;
 
 public class Line extends Shape {
     protected Line(Color color1, int startX1, int startY1, int endX1, int endY1, float stroke1) {
-        super(color1, startX1, startY1, endX1, endY1, stroke1);
+        super(color1, startX1, startY1, endX1, endY1, stroke1, false);
     }
 
     protected Line(Color color, int x, int y, float stroke1) {
-        super(color, x, y, stroke1);
+        super(color, x, y, stroke1, false);
     }
 
 

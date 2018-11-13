@@ -4,8 +4,8 @@ import java.awt.geom.Rectangle2D;
 public class Text extends Shape {
     private String context;
     private Font font;
-    public Text(Color color, int x, int y, String context, Font font) {
-        super(color, x, y, 0);
+    public Text(Color color, int x, int y, String context, Font font, boolean is) {
+        super(color, x, y, 0, is);
         this.context = context;
         this.font = font;
     }
