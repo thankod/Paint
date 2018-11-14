@@ -5,6 +5,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.tools.Tool;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -13,15 +14,26 @@ public class MainFrame extends JFrame implements Serializable {
     private static final int DEFAULT_WIDTH = 1000;
     private static final int DEFAULT_HEIGHT = 1000;
     private PaintPanel board;
-    private ToolBar tool;
+    private Tools tool;
+    private JToolBar mainToolBar;
+
+
     private FontDialog fontDialog;
     private FileIO fileIO;
+    private JLabel labelNow;
+
+
+
 
     public MainFrame() {
-        board = new PaintPanel();
-        tool = new ToolBar();
+        board = new PaintPanel();;
         fontDialog = new FontDialog(this);
         fileIO = new FileIO();
+        tool = new Tools();
+        mainToolBar = new JToolBar();
+        mainToolBar.setSize(new Dimension(700, 30));
+
+
         tool.openButton.addActionListener(actionEvent -> board.readImage(fileIO.openFile(this)));
         tool.saveButton.addActionListener(actionEvent -> {
             File file = fileIO.saveFile(this);
@@ -36,6 +48,7 @@ public class MainFrame extends JFrame implements Serializable {
                 board.writeImage(file);
             }
         });
+
         tool.selectButton.addActionListener(actionEvent -> board.setTool(PaintPanel.tools.SELECT));
         tool.ovalButton.addActionListener(actionEvent -> board.setTool(PaintPanel.tools.OVAL));
         tool.rectangleButton.addActionListener(actionEvent -> board.setTool(PaintPanel.tools.RECTANGLE));
@@ -56,8 +69,46 @@ public class MainFrame extends JFrame implements Serializable {
         tool.fillCheckBox.addActionListener(actionEvent -> board.setFill(tool.fillCheckBox.isSelected()));
         tool.deleteCheckBox.addActionListener(actionEvent -> board.setDelete(tool.deleteCheckBox.isSelected()));
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        add(tool, BorderLayout.NORTH);
+//        add(tool, BorderLayout.NORTH);
+//        add(board, BorderLayout.CENTER);
+
+
+
+
+        JToolBar barSaveOpen = new JToolBar();
+        JToolBar barChoose = new JToolBar();
+        JToolBar barShape = new JToolBar();
+        JToolBar barText = new JToolBar();
+        barSaveOpen.add(tool.saveButton);
+        barSaveOpen.add(tool.openButton);
+
+        barChoose.add(tool.selectButton);
+        barChoose.add(tool.clearButton);
+        barChoose.add(tool.deleteCheckBox);
+
+        barShape.add(tool.colorButton);
+        barShape.add(tool.lineButton);
+        barShape.add(tool.rectangleButton);
+        barShape.add(tool.ovalButton);
+        barShape.add(tool.segmentButton);
+        barShape.add(tool.strokeBox);
+        barShape.add(tool.fillCheckBox);
+
+        barText.add(tool.textButton);
+        barText.add(tool.fontButton);
+        barText.add(tool.textField);
+
+
+        mainToolBar.add(barSaveOpen);
+        mainToolBar.add(barChoose);
+        mainToolBar.add(barShape);
+        mainToolBar.add(barText);
+
+
+        add(mainToolBar, BorderLayout.NORTH);
         add(board, BorderLayout.CENTER);
+
+
     }
 }
 

@@ -4,7 +4,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-class ToolBar extends JToolBar{
+class Tools {
     public JButton openButton = new JButton("打开");
     public JButton saveButton = new JButton("保存");
     public JButton selectButton = new JButton("选择");
@@ -21,8 +21,9 @@ class ToolBar extends JToolBar{
     public JButton fontButton = new JButton("字体");
     public JCheckBox fillCheckBox = new JCheckBox("填充");
     public JCheckBox deleteCheckBox = new JCheckBox("删除");
-    public ToolBar() {
-        setFloatable(false);
+
+
+    public Tools() {
         openButton.setToolTipText("打开已保存的文件");
         saveButton.setToolTipText("保存文件");
         selectButton.setToolTipText("选择一个图形");
@@ -37,39 +38,26 @@ class ToolBar extends JToolBar{
         fontButton.setToolTipText("修改字体");
         fillCheckBox.setToolTipText("是否填充颜色");
         deleteCheckBox.setToolTipText("删除");
-        openButton.setPreferredSize(new Dimension(110,30));
-        saveButton.setPreferredSize(new Dimension(40,30));
-        selectButton.setPreferredSize(new Dimension(40,30));
-        ovalButton.setPreferredSize(new Dimension(40,30));
-        rectangleButton.setPreferredSize(new Dimension(40,30));
-        lineButton.setPreferredSize(new Dimension(40,30));
-        colorButton.setPreferredSize(new Dimension(40,30));
-        textButton.setPreferredSize(new Dimension(40,30));
-        segmentButton.setPreferredSize(new Dimension(40,30));
-        clearButton.setPreferredSize(new Dimension(40,30));
-        fontButton.setPreferredSize(new Dimension(40,30));
-        fillCheckBox.setPreferredSize(new Dimension(70, 30));
-        deleteCheckBox.setPreferredSize(new Dimension(60, 30));
-
 
 
         textField.setFont(new Font("微软雅黑", Font.PLAIN, 14));
-        this.setLayout(new FlowLayout());
-        add(openButton);
-        add(saveButton);
-        add(selectButton);
-        add(ovalButton);
-        add(rectangleButton);
-        add(lineButton);
-        add(strokeBox);
-        add(fillCheckBox);
-        add(deleteCheckBox);
-        add(colorButton);
-        add(segmentButton);
-        add(textButton);
-        add(textField);
-        add(clearButton);
-        add(fontButton);
+//        openButton.setPreferredSize(new Dimension(110,30));
+//        saveButton.setPreferredSize(new Dimension(40,30));
+//        selectButton.setPreferredSize(new Dimension(40,30));
+//        ovalButton.setPreferredSize(new Dimension(40,30));
+//        rectangleButton.setPreferredSize(new Dimension(40,30));
+//        lineButton.setPreferredSize(new Dimension(40,30));
+//        colorButton.setPreferredSize(new Dimension(40,30));
+//        textButton.setPreferredSize(new Dimension(40,30));
+//        segmentButton.setPreferredSize(new Dimension(40,30));
+//        clearButton.setPreferredSize(new Dimension(40,30));
+//        fontButton.setPreferredSize(new Dimension(40,30));
+//        fillCheckBox.setPreferredSize(new Dimension(70, 30));
+//        deleteCheckBox.setPreferredSize(new Dimension(60, 30));
+
+//        historyMain.setLayout(new BoxLayout(historyMain,  BoxLayout.PAGE_AXIS));
+//        JPanel historyoptions = new JPanel();
+//        historyoptions.setLayout(new BorderLayout());
     }
 
 }
