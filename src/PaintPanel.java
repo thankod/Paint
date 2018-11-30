@@ -12,9 +12,10 @@ import javax.swing.*;
 
 public class PaintPanel extends JComponent implements Serializable {
     private ArrayList<Shape> shapes;
-    private ArrayList<Line> lines;
     private Shape currentShape;
     private String currentText;
+    private Stack<Operation> operationStack;
+    private Stack<Operation> redoStack;
     public enum tools {OVAL, RECTANGLE, LINE, SEGMENT, SELECT, TEXT}//0 圆形 1 方形 2 自由画线 3 橡皮 4 选择 5 线段
     public enum cursors {DEFAULT, CROSS, MOVE}// 0 普通鼠标 1 十字架 2 移动
     private Font font;
@@ -34,9 +35,10 @@ public class PaintPanel extends JComponent implements Serializable {
         fore = Color.BLACK;
         font =  new Font("黑体", 0, 20);
         shapes = new ArrayList<>();
-        lines = new ArrayList<>();
         currentShape = null;
         currentText = null;
+        operationStack = new Stack<>();
+        redoStack = new Stack<>();
         addMouseListener(new MouseHandler());
         addMouseMotionListener(new MouseMotionHandler());
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -67,27 +69,38 @@ public class PaintPanel extends JComponent implements Serializable {
         return fore;
     }
 
-    public void setFill(boolean is) {this.fill = is;}
+    public void setFill(boolean isFilled) {this.fill = isFilled;}
 
     public void setDelete(boolean del) {this.delete = del;}
 
 
-    /**
+    /**ArrayList
      * 将存储的所有图形绘制出来
      */
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         for (Shape s : shapes) {
-            if(s.isDeleted) continue;
-            if(s.isFill) s.drawFill(g2);
-            else {
-                s.draw(g2);
-            }
+            s.draw(g2);
         }
-        for (Line l : lines) {
-            if(l.isDeleted) continue;
-            l.draw(g2);
+
+    }
+
+    public void undo() {
+        if(!operationStack.empty()) {
+            Operation o = operationStack.pop();
+            o.undo();
+            redoStack.push(o);
+            repaint();
+        }
+    }
+
+    public void redo() {
+        if(!redoStack.empty()) {
+            Operation o = redoStack.pop();
+            o.redo();
+            operationStack.push(o);
+            repaint();
         }
     }
 
@@ -96,7 +109,7 @@ public class PaintPanel extends JComponent implements Serializable {
      */
     public Shape find (int x, int y) {
         for (Shape r : shapes) {
-            if (r.contain(x, y))
+            if (r.contain(x, y) && !r.isDeleted)
                 return r;
         }
         return null;
@@ -117,7 +130,8 @@ public class PaintPanel extends JComponent implements Serializable {
      */
     public void clear () {
         shapes.clear();
-        lines.clear();
+        operationStack.clear();
+        redoStack.clear();
         repaint();
     }
 
@@ -129,7 +143,6 @@ public class PaintPanel extends JComponent implements Serializable {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(shapes);
-            oos.writeObject(lines);
             oos.flush();
             oos.close();
             fos.close();
@@ -146,7 +159,6 @@ public class PaintPanel extends JComponent implements Serializable {
             FileInputStream fis = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fis);
             shapes = (ArrayList<Shape>) ois.readObject();
-            lines = (ArrayList<Line>) ois.readObject();
             repaint();
             ois.close();
             fis.close();
@@ -159,40 +171,61 @@ public class PaintPanel extends JComponent implements Serializable {
     }
 
     private class MouseHandler extends MouseAdapter {
+        private int pressX;
+        private int pressY;
+        private int releasedX;
+        private int releasedY;
+
         /**
          * 鼠标点击时执行的操作
          */
         public void mousePressed(MouseEvent mouseEvent) {
             switch (tool) {
                 case OVAL:
-                    currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill, delete);
+                    currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
                     shapes.add(currentShape);
+                    redoStack.clear();;
+                    operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case RECTANGLE:
-                    currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill, delete);
+                    currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
                     shapes.add(currentShape);
+                    redoStack.clear();;
+                    operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case LINE:
-                    x1 = mouseEvent.getX();
-                    y1 = mouseEvent.getY();
+                    pressX = x1 = mouseEvent.getX();
+                    pressY = y1 = mouseEvent.getY();
+                    currentShape = new LineSet(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
+                    shapes.add(currentShape);
+                    redoStack.clear();;
+                    operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case SELECT:
-                    x1 = mouseEvent.getX();
-                    y1 = mouseEvent.getY();
+                    pressX = x1 = mouseEvent.getX();
+                    pressY = y1 = mouseEvent.getY();
                     if (cursor == cursors.MOVE) {
                         currentShape = find(mouseEvent.getX(), mouseEvent.getY());
-                        if(delete) currentShape.isDeleted = true;
+                        if(delete) {
+                            currentShape.setDeleted(true);
+                            redoStack.clear();;
+                            operationStack.push(new Operation(Operation.Type.DEL, currentShape));
+                        }
                     }
                     break;
                 case SEGMENT:
-                    currentShape = new Line(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, delete);
+                    currentShape = new Line(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
                     shapes.add(currentShape);
+                    redoStack.clear();;
+                    operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case TEXT:
                     if(currentText == null)
                         break;
-                    currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font, fill, delete);
+                    currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font);
                     shapes.add(currentShape);
+                    redoStack.clear();;
+                    operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 default:
                     break;
@@ -200,8 +233,13 @@ public class PaintPanel extends JComponent implements Serializable {
             repaint();
         }
 
-        public void mouseClicked(MouseEvent mouseEvent) {
-
+        public void mouseReleased(MouseEvent mouseEvent) {
+            if(tool == tools.SELECT) {
+                releasedX = mouseEvent.getX();
+                releasedY = mouseEvent.getY();
+                redoStack.clear();;
+                operationStack.push(new Operation(Operation.Type.MOV, currentShape, releasedX, releasedY, pressX, pressY));
+            }
         }
     }
 
@@ -214,16 +252,16 @@ public class PaintPanel extends JComponent implements Serializable {
             int y2 = mouseEvent.getY();
             if(tool == tools.SELECT) {
                 if (find(x2, y2) == null) {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));//选择模式下如果找不到图形，就是默认形状
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));//选择模式下如果找不到图形，就是默认鼠标指针
                     cursor = cursors.DEFAULT;
                 } else {
                     currentShape = find(x2, y2);
-                    setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));//否则是移动形状
+                    setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));//否则是移动鼠标指针
                     cursor = cursors.MOVE;
                 }
             }
             else {
-                setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));//非选择模式下一律为十字鼠标指针
                 cursor = cursors.CROSS;
             }
 
@@ -241,10 +279,11 @@ public class PaintPanel extends JComponent implements Serializable {
             } else if (tool == tools.LINE) {
                 int x2 = mouseEvent.getX();
                 int y2 = mouseEvent.getY();
-                Line l = new Line(fore, x1, y1, x2, y2, stroke, delete);
+                Line l = new Line(fore, x1, y1, x2, y2, stroke);
                 x1 = x2;
                 y1 = y2;
-                lines.add(l);
+                LineSet temp = (LineSet)currentShape;
+                temp.addNew(l);
                 repaint();
             } else if (tool == tools.SELECT) {
                 if (cursor != cursors.MOVE) return;

@@ -21,22 +21,22 @@ public abstract class Shape extends JLabel implements Serializable {
     protected int deltaX = 0;
     protected int deltaY = 0;
     protected float stroke = 0;
-    protected boolean isFill = false;
+    protected boolean isFilled = false;
     protected boolean isDeleted = false;
 
 
-    protected Shape(Color color1, int x, int y, float stroke1, boolean is,  boolean isDel) {
+    protected Shape(Color color1, int x, int y, float stroke1, boolean isFilled1) {
         color = color1;
         stroke = stroke1;
         nwX = startX = endX = x;
         nwY = startY = endY = y;
         deltaX = 0;
         deltaY = 0;
-        isFill = is;
-        isDeleted = isDel;
+        isFilled = isFilled1;
+        isDeleted = false;
     }
 
-    protected Shape(Color color1, int startX1, int startY1, int endX1, int endY1, float stroke1, boolean is, boolean isDel) {
+    protected Shape(Color color1, int startX1, int startY1, int endX1, int endY1, float stroke1, boolean isFilled1) {
         color = color1;
         stroke = stroke1;
         startX = startX1;
@@ -45,21 +45,14 @@ public abstract class Shape extends JLabel implements Serializable {
         endY = endY1;
         deltaX = 0;
         deltaY = 0;
-        isFill = is;
-        isDeleted = isDel;
+        isFilled = isFilled1;
+        isDeleted = false;
     }
     /**
-     * 绘制这个图形的方法 不带填充
+     * 绘制这个图形的方法
      * @param g2 从PaintPanel里传来的Graphics2D对象
      */
     public abstract void draw(Graphics2D g2);
-
-    /**
-     * 绘制这个图形的方法 带填充效果
-     * @param g2 从PaintPanel里传来的Graphics2D对象
-     */
-    public abstract void drawFill(Graphics2D g2);
-
 
     /**
      * 判断这个图形是否包括某坐标
@@ -67,6 +60,8 @@ public abstract class Shape extends JLabel implements Serializable {
      * @param y y坐标
      */
     public abstract boolean contain(int x, int y);
+
+    //public abstract void addNew(Line l);
 
 
     /**
@@ -115,5 +110,13 @@ public abstract class Shape extends JLabel implements Serializable {
         startY += y;
         nwY += y;
         endY += y;
+    }
+
+    public void setFilled(boolean b) {
+        isFilled = b;
+    }
+
+    public void setDeleted(boolean b) {
+        isDeleted = b;
     }
 }

@@ -19,6 +19,8 @@ class Tools {
     public JButton clearButton = new JButton("清屏");
     public JTextField textField = new JTextField("在此输入文字并按回车确定");
     public JButton fontButton = new JButton("字体");
+    public JButton undoButton = new JButton("撤销");
+    public JButton redoButton = new JButton("重做");
     public JCheckBox fillCheckBox = new JCheckBox("填充");
     public JCheckBox deleteCheckBox = new JCheckBox("删除");
 
@@ -38,8 +40,8 @@ class Tools {
         fontButton.setToolTipText("修改字体");
         fillCheckBox.setToolTipText("是否填充颜色");
         deleteCheckBox.setToolTipText("删除");
-
-
+        undoButton.setToolTipText("撤销上次的操作");
+        redoButton.setToolTipText("重做撤销的操作");
         textField.setFont(new Font("微软雅黑", Font.PLAIN, 14));
 //        openButton.setPreferredSize(new Dimension(110,30));
 //        saveButton.setPreferredSize(new Dimension(40,30));

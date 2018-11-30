@@ -4,10 +4,7 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.tools.Tool;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
 public class MainFrame extends JFrame implements Serializable {
@@ -17,10 +14,9 @@ public class MainFrame extends JFrame implements Serializable {
     private Tools tool;
     private JToolBar mainToolBar;
 
-
     private FontDialog fontDialog;
     private FileIO fileIO;
-    private JLabel labelNow;
+    //private JLabel labelNow;
 
 
 
@@ -68,12 +64,11 @@ public class MainFrame extends JFrame implements Serializable {
         });
         tool.fillCheckBox.addActionListener(actionEvent -> board.setFill(tool.fillCheckBox.isSelected()));
         tool.deleteCheckBox.addActionListener(actionEvent -> board.setDelete(tool.deleteCheckBox.isSelected()));
+
+        tool.undoButton.addActionListener(actionEvent -> board.undo());
+        tool.redoButton.addActionListener(actionEvent -> board.redo());
+
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-//        add(tool, BorderLayout.NORTH);
-//        add(board, BorderLayout.CENTER);
-
-
-
 
         JToolBar barSaveOpen = new JToolBar();
         JToolBar barChoose = new JToolBar();
@@ -81,6 +76,8 @@ public class MainFrame extends JFrame implements Serializable {
         JToolBar barText = new JToolBar();
         barSaveOpen.add(tool.saveButton);
         barSaveOpen.add(tool.openButton);
+        barSaveOpen.add(tool.undoButton);
+        barSaveOpen.add(tool.redoButton);
 
         barChoose.add(tool.selectButton);
         barChoose.add(tool.clearButton);
