@@ -101,15 +101,17 @@ public abstract class Shape extends JLabel implements Serializable {
     }
 
     /**
-     * 选中此图形后，通过移动的变化量x、y，修改各参数
+     * 选中此图形后，通过移动的变化量dx、dy，修改各参数
+     * @param dx x坐标变化量
+     * @param dy y坐标变化量
      */
-    public void moveShape(int x, int y) {
-        startX += x;
-        nwX += x;
-        endX += x ;
-        startY += y;
-        nwY += y;
-        endY += y;
+    public void moveShape(int dx, int dy) {
+        startX += dx;
+        nwX += dx;
+        endX += dx ;
+        startY += dy;
+        nwY += dy;
+        endY += dy;
     }
 
     public void setFilled(boolean b) {

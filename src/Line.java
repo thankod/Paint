@@ -1,5 +1,5 @@
-/**
- * 直线类，继承自Shape类
+/*
+  直线类，继承自Shape类
  */
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -24,7 +24,9 @@ public class Line extends Shape {
         g2.setStroke(new BasicStroke(stroke));
         g2.drawLine(startX, startY, endX, endY);
     }
-
+    /**
+     * 直线无法选中，因此包含函数恒返回为false
+     */
     public boolean contain(int x, int y) { return false; }
 
 }

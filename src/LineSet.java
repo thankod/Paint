@@ -1,5 +1,5 @@
-/**
- * 普通线类，继承自Shape类，包含了很多Line
+/*
+  普通线类，继承自Shape类，包含了很多Line
  */
 import java.awt.*;
 import java.awt.geom.Line2D;

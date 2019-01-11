@@ -6,12 +6,12 @@ import java.awt.*;
 
 public class FontDialog extends JDialog {
 
-    public String[] sizeList = {"8", "9", "10", "11", "12", "13", "14", "15", "16", "18", "20", "22", "24", "26", "28", "30"};
-    public String[] fontList = {"宋体", "黑体", "楷体"};
-    public String[] shapeList = {"通常", "加粗", "斜体"};
-    public JComboBox<String> fontBox = new JComboBox<>(fontList);
-    public JComboBox<String> sizeBox = new JComboBox<>(sizeList);
-    public JComboBox<String> shapeBox = new JComboBox<>(shapeList);
+    private String[] sizeList = {"8", "9", "10", "11", "12", "13", "14", "15", "16", "18", "20", "22", "24", "26", "28", "30"};
+    private String[] fontList = {"宋体", "黑体", "楷体"};
+    private String[] shapeList = {"通常", "加粗", "斜体"};
+    private JComboBox<String> fontBox = new JComboBox<>(fontList);
+    private JComboBox<String> sizeBox = new JComboBox<>(sizeList);
+    private JComboBox<String> shapeBox = new JComboBox<>(shapeList);
 
     public FontDialog(MainFrame frame) {
         super(frame, "修改字体", true);

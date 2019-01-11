@@ -16,6 +16,10 @@ public class PaintPanel extends JComponent implements Serializable {
     private String currentText;
     private Stack<Operation> operationStack;
     private Stack<Operation> redoStack;
+
+
+
+
     public enum tools {OVAL, RECTANGLE, LINE, SEGMENT, SELECT, TEXT}//0 圆形 1 方形 2 自由画线 3 橡皮 4 选择 5 线段
     public enum cursors {DEFAULT, CROSS, MOVE}// 0 普通鼠标 1 十字架 2 移动
     private Font font;
@@ -27,6 +31,7 @@ public class PaintPanel extends JComponent implements Serializable {
     private int y1 = 0;
     private boolean fill;
     private boolean delete;
+    private boolean saved;
 
     public PaintPanel() {
         tool = tools.OVAL;
@@ -43,11 +48,12 @@ public class PaintPanel extends JComponent implements Serializable {
         addMouseMotionListener(new MouseMotionHandler());
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         cursor = cursors.CROSS;
+        saved = false;
     }
 
-    public void setTool(tools t) {
-        this.tool = t;
-    }
+    public boolean isSaved() { return saved; }
+
+    public void setTool(tools t) { this.tool = t; }
 
     public void setCurrentText(String t) {
         this.currentText = t;
@@ -87,6 +93,7 @@ public class PaintPanel extends JComponent implements Serializable {
     }
 
     public void undo() {
+        saved = false;
         if(!operationStack.empty()) {
             Operation o = operationStack.pop();
             o.undo();
@@ -96,6 +103,7 @@ public class PaintPanel extends JComponent implements Serializable {
     }
 
     public void redo() {
+        saved = false;
         if(!redoStack.empty()) {
             Operation o = redoStack.pop();
             o.redo();
@@ -107,7 +115,7 @@ public class PaintPanel extends JComponent implements Serializable {
     /**
      * 查找坐标(x,y)处是否有图形，如有，返回这个图形，否则返回null
      */
-    public Shape find (int x, int y) {
+    private Shape find(int x, int y) {
         for (Shape r : shapes) {
             if (r.contain(x, y) && !r.isDeleted)
                 return r;
@@ -119,6 +127,7 @@ public class PaintPanel extends JComponent implements Serializable {
      * 将目前的内容画到一个BufferedImage中并返回
      */
     public BufferedImage getImage () {
+        saved = true;
         BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2d = image.createGraphics();
         graphics2d.fillRect(0,0, image.getWidth(), image.getHeight());
@@ -129,6 +138,7 @@ public class PaintPanel extends JComponent implements Serializable {
      * 清除所存的所有图形信息并重绘
      */
     public void clear () {
+        saved = false;
         shapes.clear();
         operationStack.clear();
         redoStack.clear();
@@ -139,6 +149,7 @@ public class PaintPanel extends JComponent implements Serializable {
      * 将目前的图形信息保存到一个文件中
      */
     public void writeImage (File file) {
+        saved = true;
         try {
             FileOutputStream fos = new FileOutputStream(file);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -155,6 +166,7 @@ public class PaintPanel extends JComponent implements Serializable {
      * 从一个文件中读取图形信息，将其保存到程序中并重绘
      */
     public void readImage (File file) {
+        saved = false;
         try {
             FileInputStream fis = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fis);
@@ -182,23 +194,26 @@ public class PaintPanel extends JComponent implements Serializable {
         public void mousePressed(MouseEvent mouseEvent) {
             switch (tool) {
                 case OVAL:
+                    saved = false;
                     currentShape = new Oval(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
                     shapes.add(currentShape);
-                    redoStack.clear();;
+                    redoStack.clear();
                     operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case RECTANGLE:
+                    saved = false;
                     currentShape = new Rectangle(fore, mouseEvent.getX(), mouseEvent.getY(), stroke, fill);
                     shapes.add(currentShape);
-                    redoStack.clear();;
+                    redoStack.clear();
                     operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case LINE:
+                    saved = false;
                     pressX = x1 = mouseEvent.getX();
                     pressY = y1 = mouseEvent.getY();
                     currentShape = new LineSet(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
                     shapes.add(currentShape);
-                    redoStack.clear();;
+                    redoStack.clear();
                     operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case SELECT:
@@ -207,24 +222,28 @@ public class PaintPanel extends JComponent implements Serializable {
                     if (cursor == cursors.MOVE) {
                         currentShape = find(mouseEvent.getX(), mouseEvent.getY());
                         if(delete) {
+                            saved = false;
+                            assert currentShape != null;
                             currentShape.setDeleted(true);
-                            redoStack.clear();;
+                            redoStack.clear();
                             operationStack.push(new Operation(Operation.Type.DEL, currentShape));
                         }
                     }
                     break;
                 case SEGMENT:
+                    saved = false;
                     currentShape = new Line(fore, mouseEvent.getX(), mouseEvent.getY(), stroke);
                     shapes.add(currentShape);
-                    redoStack.clear();;
+                    redoStack.clear();
                     operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 case TEXT:
+                    saved = false;
                     if(currentText == null)
                         break;
                     currentShape = new Text(fore, mouseEvent.getX(), mouseEvent.getY(), currentText, font);
                     shapes.add(currentShape);
-                    redoStack.clear();;
+                    redoStack.clear();
                     operationStack.push(new Operation(Operation.Type.ADD, currentShape));
                     break;
                 default:
@@ -232,12 +251,15 @@ public class PaintPanel extends JComponent implements Serializable {
             }
             repaint();
         }
-
+        /**
+         * 鼠标松开时执行的操作
+         */
         public void mouseReleased(MouseEvent mouseEvent) {
             if(tool == tools.SELECT) {
+                saved = false;
                 releasedX = mouseEvent.getX();
                 releasedY = mouseEvent.getY();
-                redoStack.clear();;
+                redoStack.clear();
                 operationStack.push(new Operation(Operation.Type.MOV, currentShape, releasedX, releasedY, pressX, pressY));
             }
         }
@@ -270,6 +292,7 @@ public class PaintPanel extends JComponent implements Serializable {
          * 鼠标拖拽时执行的操作
          */
         public void mouseDragged(MouseEvent mouseEvent) {
+            saved = false;
             if ((tool == tools.OVAL || tool == tools.RECTANGLE || tool == tools.SEGMENT) && currentShape != null) {
                 int x = mouseEvent.getX();
                 int y = mouseEvent.getY();
@@ -283,7 +306,7 @@ public class PaintPanel extends JComponent implements Serializable {
                 x1 = x2;
                 y1 = y2;
                 LineSet temp = (LineSet)currentShape;
-                temp.addNew(l);
+                temp.addNew(l);//将第一条线加入LineSet里
                 repaint();
             } else if (tool == tools.SELECT) {
                 if (cursor != cursors.MOVE) return;

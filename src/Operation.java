@@ -18,7 +18,9 @@ public class Operation {
         nowY = nowY1;
         shape = shape1;
     }
-
+    /**
+     * 根据本次操作的类型，决定撤销的具体内容
+     */
     public void undo() {
         switch (type) {
             case ADD:
@@ -32,7 +34,9 @@ public class Operation {
                 break;
         }
     }
-
+    /**
+     * 根据本次操作的类型，决定重做的具体内容
+     */
     public void redo() {
         switch (type) {
             case ADD:
