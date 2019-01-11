@@ -29,7 +29,6 @@ public class MainFrame extends JFrame implements Serializable {
         mainToolBar.setSize(new Dimension(700, 30));
         this.getContentPane().setBackground(java.awt.Color.white);//将背景设为白色
 
-
         tool.openButton.addActionListener(actionEvent -> board.readImage(fileIO.openFile(this)));
         tool.saveButton.addActionListener(actionEvent -> fileIO.saveFile(this, board));
 
@@ -61,6 +60,11 @@ public class MainFrame extends JFrame implements Serializable {
          */
         addWindowListener(new MyWindowAdapter());
 
+
+
+
+
+
         menuBar.newItem.addActionListener(actionEvent -> {
             if(board.isSaved()) {
                 board.clear();
@@ -78,6 +82,15 @@ public class MainFrame extends JFrame implements Serializable {
         menuBar.openItem.addActionListener(actionEvent -> board.readImage(fileIO.openFile(this)));
         menuBar.aboutItem.addActionListener(actionEvent ->
                 JOptionPane.showMessageDialog(null, "本画图软件由东北大学计算机1609谢天 林智超 郑智佳共同完成", "关于", JOptionPane.INFORMATION_MESSAGE));
+        menuBar.fontItem.addActionListener(actionEvent -> {
+            fontDialog.setVisible(true);
+            board.setFont(fontDialog.getFont());
+        });
+        menuBar.colorItem.addActionListener(actionEvent ->  board.setFore(JColorChooser.showDialog(null, "调色板", Color.BLACK)));
+        menuBar.redoItem.addActionListener(actionEvent -> board.redo());
+        menuBar.undoItem.addActionListener(actionEvent -> board.undo());
+
+
 
         setSize(1000, 1000);
 

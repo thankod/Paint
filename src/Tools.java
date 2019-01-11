@@ -43,23 +43,5 @@ class Tools {
         undoButton.setToolTipText("撤销上次的操作");
         redoButton.setToolTipText("重做撤销的操作");
         textField.setFont(new Font("微软雅黑", Font.PLAIN, 14));
-//        openButton.setPreferredSize(new Dimension(110,30));
-//        saveButton.setPreferredSize(new Dimension(40,30));
-//        selectButton.setPreferredSize(new Dimension(40,30));
-//        ovalButton.setPreferredSize(new Dimension(40,30));
-//        rectangleButton.setPreferredSize(new Dimension(40,30));
-//        lineButton.setPreferredSize(new Dimension(40,30));
-//        colorButton.setPreferredSize(new Dimension(40,30));
-//        textButton.setPreferredSize(new Dimension(40,30));
-//        segmentButton.setPreferredSize(new Dimension(40,30));
-//        clearButton.setPreferredSize(new Dimension(40,30));
-//        fontButton.setPreferredSize(new Dimension(40,30));
-//        fillCheckBox.setPreferredSize(new Dimension(70, 30));
-//        deleteCheckBox.setPreferredSize(new Dimension(60, 30));
-
-//        historyMain.setLayout(new BoxLayout(historyMain,  BoxLayout.PAGE_AXIS));
-//        JPanel historyoptions = new JPanel();
-//        historyoptions.setLayout(new BorderLayout());
     }
-
 }
